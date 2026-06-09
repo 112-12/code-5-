@@ -1,0 +1,41 @@
+<script>
+
+function sendAll(testMode){
+
+  let rows =
+    document.querySelectorAll(
+      ".studentCheck:checked"
+    );
+
+  sendNext(0, rows, testMode);
+}
+
+function sendNext(i, rows, testMode){
+
+  if(i >= rows.length){
+
+    document.getElementById("progress")
+      .innerHTML = "發送完成";
+
+    rows.forEach(r => r.checked = false);
+
+    return;
+  }
+
+  document.getElementById("progress")
+    .innerHTML =
+    `正在發送 (${i+1}/${rows.length})`;
+
+  const student =
+    JSON.parse(
+      rows[i].dataset.student
+    );
+
+  google.script.run
+    .withSuccessHandler(() => {
+      sendNext(i+1, rows, testMode);
+    })
+    .sendMail(student, testMode);
+}
+
+</script>
